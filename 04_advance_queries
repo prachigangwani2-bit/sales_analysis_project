@@ -1,0 +1,69 @@
+-- ============================================================
+-- ADVANCED QUERIES - JOINS & SUBQUERIES
+-- ============================================================
+
+-- Top 10 customers by revenue
+SELECT c.customerName, c.country,
+       COUNT(o.orderNumber) AS total_orders,
+       ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS total_revenue
+FROM customers c
+JOIN orders o ON c.customerNumber = o.customerNumber
+JOIN orderdetails od ON o.orderNumber = od.orderNumber
+GROUP BY c.customerName, c.country
+ORDER BY total_revenue DESC
+LIMIT 10;
+
+-- Best selling products
+SELECT p.productName, p.productLine,
+       ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS total_revenue
+FROM products p
+JOIN orderdetails od ON p.productCode = od.productCode
+GROUP BY p.productName, p.productLine
+ORDER BY total_revenue DESC
+LIMIT 10;
+
+-- Sales by product line
+SELECT p.productLine,
+       ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS total_revenue
+FROM products p
+JOIN orderdetails od ON p.productCode = od.productCode
+GROUP BY p.productLine
+ORDER BY total_revenue DESC;
+
+-- Employee performance
+SELECT e.firstName, e.lastName,
+       COUNT(o.orderNumber) AS total_orders,
+       ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS total_revenue
+FROM employees e
+JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
+JOIN orders o ON c.customerNumber = o.customerNumber
+JOIN orderdetails od ON o.orderNumber = od.orderNumber
+GROUP BY e.employeeNumber, e.firstName, e.lastName
+ORDER BY total_revenue DESC;
+
+-- Monthly revenue trend
+SELECT YEAR(o.orderDate) AS year,
+       MONTH(o.orderDate) AS month,
+       ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS total_revenue
+FROM orders o
+JOIN orderdetails od ON o.orderNumber = od.orderNumber
+GROUP BY YEAR(o.orderDate), MONTH(o.orderDate)
+ORDER BY year, month;
+
+-- Customers with above average credit limit
+SELECT customerName, country, creditLimit
+FROM customers
+WHERE creditLimit > (
+    SELECT AVG(creditLimit)
+    FROM customers
+)
+ORDER BY creditLimit DESC;
+
+-- Products with below average stock
+SELECT productName, productLine, quantityInStock
+FROM products
+WHERE quantityInStock < (
+    SELECT AVG(quantityInStock)
+    FROM products
+)
+ORDER BY quantityInStock ASC;
