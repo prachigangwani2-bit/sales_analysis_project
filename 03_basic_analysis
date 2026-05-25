@@ -1,0 +1,42 @@
+-- ============================================================
+-- 03_basic_analysis.sql
+-- Project: Sales Data Analysis
+-- Database: ClassicModels
+-- ============================================================
+
+USE classicmodels;
+
+-- Total number of orders
+SELECT COUNT(*) AS total_orders 
+FROM orders;
+
+-- Orders by status
+-- Shows how many were shipped, cancelled, on hold etc
+SELECT status, COUNT(*) AS total_orders
+FROM orders
+GROUP BY status
+ORDER BY total_orders DESC;
+
+-- Orders by year
+-- Shows if business is growing year by year
+SELECT YEAR(orderDate) AS year, 
+       COUNT(*) AS total_orders
+FROM orders
+GROUP BY YEAR(orderDate)
+ORDER BY year;
+
+-- Orders by month
+-- Shows which months are busiest
+SELECT MONTH(orderDate) AS month, 
+       COUNT(*) AS total_orders
+FROM orders
+GROUP BY MONTH(orderDate)
+ORDER BY total_orders DESC;
+
+-- Customers by country
+-- Shows where most customers are located
+SELECT country, 
+       COUNT(*) AS total_customers
+FROM customers
+GROUP BY country
+ORDER BY total_customers DESC;
